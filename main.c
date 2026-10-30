@@ -1,8 +1,122 @@
 #include <stdio.h>
 
+
+int calculateScore(int score, int total_question)
+{
+ int percentage;
+ total_question = 5;
+
+ percentage = (score * 100) / total_question;
+
+ printf("\n Your Score is: %d/%d", score, total_question);
+ printf("\n Your Percentage is: %d%%", percentage);
+
+ if(percentage >= 80)
+ {
+    printf("\n Excellent Work!");
+ }
+ else if(percentage >= 50)
+ {
+    printf("\n Good job, you can score better if you practice some more");
+ }
+ else
+ {
+    printf("\n You need more practice");
+ }
+ 
+ return percentage;
+}
+
+
+void SaveResult(char name[], int subject, int score, int percentage)
+{
+FILE *file;
+file =  fopen("results.txt", "a");
+
+if (file == NULL)
+    {
+        printf("No previous results found.\n");
+        return;
+    }
+
+fprintf(file, "\n Name: %s", name);
+
+if (subject == 1)
+{
+    fprintf(file, "\n Subject: Maths");
+}
+else if (subject == 2)
+{
+    fprintf(file, "\n Subject: Programming Fundamentals");
+}
+else if (subject == 3)
+{
+    fprintf(file, "\n Subject: English");
+}
+
+fprintf(file, "\n Score: %d/5", score);
+fprintf(file, "\n Percentage: %d%%", percentage);
+
+fclose(file);
+printf("\n Resultd saved successfully! \n");
+}
+
+
+
+void view_Result()
+{
+    FILE *file;
+    char name[50];
+    int subject;
+    int score;
+    int percentage;
+
+    file = fopen("results.txt", "r");
+
+    if (file == NULL)
+    {
+        printf("No previous results found.\n");
+        return;
+    }
+
+    printf("\n===== PREVIOUS QUIZ RESULTS =====\n");
+
+    while (fscanf(file, "%49s %d %d %d",
+                  name, &subject, &score, &percentage) == 4)
+    {
+        printf("\nStudent: %s\n", name);
+
+        if (subject == 1)
+        {
+            printf("Subject: Maths\n");
+        }
+        else if (subject == 2)
+        {
+            printf("Subject: Programming Fundamentals\n");
+        }
+        else if (subject == 3)
+        {
+            printf("Subject: English\n");
+        }
+
+        printf("Score: %d/5\n", score);
+        printf("Percentage: %d%%\n", percentage);
+    }
+
+    fclose(file);
+
+}
+
 int main()
 {
     char name[50];
+    int subject;
+    int score=0;
+    int answer;
+    int right_answer;
+    int total_question = 5;
+    int choice;
+
     printf("======STUDY BUDDY====== \n");
     printf("\n");
     printf("Enter your name: ");
@@ -12,27 +126,43 @@ int main()
 //Notice that we don't put & before name. 
 // For this character array, we pass its name directly.
 //%s is the placeholder for a string. It gets replaced by the student's entered name.
+ //score = 0 means the student starts with zero points.
 
-int subject;
+ printf("1. Start new quiz\n");
+ printf("2. View previous results \n");
+ printf("Enter your choice:");
+ scanf("%d", &choice);
+
+ if (choice == 2)
+ {
+    view_Result();
+    return 0;
+ }
+ else if (choice != 1)
+ {
+    printf("Invalid choice! \n");
+    return 0;
+ }
+
 printf("Choose a subject: \n");
 printf("1. Maths\n");
 printf("2. Programming Fundamentals\n");
 printf("3. English\n");
 
-printf("%s Enter the subject that you want to practice today:", name);
+printf("\n %s Enter the subject that you want to practice today:", name);
 scanf("%d", &subject);
 
 if (subject == 1)
 {
-   printf("You have chosen Maths. Let's practice some problems!\n");
+   printf("\n You have chosen Maths. Let's practice some problems!\n");
 }
 else if (subject == 2)
 {
-    printf("You have chosen Programming Fundamentals. Let's practice some problems!\n");
+    printf("\n You have chosen Programming Fundamentals. Let's practice some problems!\n");
 }
 else if (subject == 3)
 {
-    printf("You have chosen English. Let's practice some problems!\n");
+    printf("\n You have chosen English. Let's practice some problems!\n");
 }
 else
 {
@@ -44,10 +174,7 @@ printf("\n\n");
 
 
 
-int score=0;
-//score = 0 means the student starts with zero points.
-int answer;
-int right_answer;
+
 
 if (subject == 1) 
 {
@@ -291,6 +418,12 @@ else
 {
     printf("Invalid subject choice. Please restart the program\n and choose a valid subject.\n");
 }
+
+     // Calling the calculateScore function
+     int percentage = calculateScore (score, total_question);
+    
+     // Calling the SaveResult function
+     SaveResult (name, subject, score, percentage);
 
     return 0;
 }
